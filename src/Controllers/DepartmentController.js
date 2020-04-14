@@ -21,5 +21,33 @@ router.get('/', function (req, res) {
         } else {
             res.status(200).send(dep);
         }
-    })
+    });
 });
+
+router.delete('/:id', (req, res) => {
+    let id = req.params.id;
+    Department.deleteOne({_id: id}, (error) => {
+        if (error){
+            res.status(500).send(error);
+        }else{
+            res.status(200).send({});
+        }
+    });
+});
+
+router.patch('/:id', (req, res) => {
+   Department.findById(req.params.id, (error, dep) => {
+      if (error){
+          res.status(500).send(error)
+      }else if(!dep){
+          res.status(404).send({})
+      }else{
+          dep.name = req.body.name;
+          dep.save()
+              .then((d)=> res.status(200).send(d))
+              .catch((e)=> res.status(500).send(e));
+      }
+   });
+});
+
+module.exports = router;
